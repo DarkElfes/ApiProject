@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ApiProject.Shared\ApiProject.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 using ApiProject.Server.Data;
+using ApiProject.Server.Users;
 using Carter;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +12,20 @@ builder.Services.AddOpenApi();
 // Add database in memory
 builder.Services.AddDbContext<AppDbContext>(o => o.UseInMemoryDatabase("AppDb"));
 
-// Add MediatR
+// Add token provider 
+builder.Services.AddScoped<TokenProvider>();
+
+// Add MediatR 
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(options =>
+    {
+        options.AllowAnyOrigin()
+            .AllowAnyHeader();
+    });
+});
 
 
 // Add Carter
@@ -26,11 +39,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors();
 
 // Map Carter
 app.MapCarter();
 
 app.UseHttpsRedirection();
-
 
 app.Run();

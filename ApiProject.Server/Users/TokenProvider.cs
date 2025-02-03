@@ -5,27 +5,28 @@ using System.Text;
 
 namespace ApiProject.Server.Users;
 
-public record TokenProvider(
-    IConfiguration Config
+public class TokenProvider(
+    IConfiguration _config
     )
 {
     public string Create(User user)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config["Jwt:Key"]!));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Email, user.Email),
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(Config.GetValue<int>("Jwt:ExpiryMinutes")),
+            Expires = DateTime.UtcNow.AddMinutes(_config.GetValue<int>("Jwt:ExpiryMinutes")),
             SigningCredentials = credentials,
-            Issuer = Config["Jwt:Issuer"],
-            Audience = Config["Jwt:Audience"]
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
         };
 
         return new JsonWebTokenHandler().CreateToken(tokenDescriptor);
