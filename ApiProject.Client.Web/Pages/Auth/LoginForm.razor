@@ -1,0 +1,44 @@
+﻿@using ApiProject.Client.Web.Users
+@using ApiProject.Shared.Users;
+@using ApiProject.Shared.Users.Commands
+@using static ApiProject.Client.Web.Pages.Auth.Auth
+
+<EditForm Model="@model" OnValidSubmit="LoginAsync" FormName="Login">
+    <MudStack Spacing="2">
+        <MudText Align="Align.Center" Typo="Typo.h5" Color="Color.Primary">Login</MudText>
+        <DataAnnotationsValidator />
+
+        <MudTextField Label="Email" @bind-Value="model.Email" For="@(() => model.Email)" OnlyValidateIfDirty />
+        <MudTextField Label="Password" @bind-Value="model.Password" For="@(() => model.Password)" OnlyValidateIfDirty />
+
+        <MudStack Row Justify="Justify.SpaceBetween">
+            <MudText Class="align-self-end">Not have account? <MudLink OnClick="@AuthState.ChangForm">Register</MudLink></MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="align-self-end">Login</MudButton>
+        </MudStack>
+    </MudStack>
+</EditForm>
+
+@code {
+    [Inject] public required AuthService AuthService { get; set; }
+    [Inject] public required NavigationManager Navigation { get; set; }
+    [Inject] public required ISnackbar Snackbar { get; set; }
+
+    [Parameter] public required AuthState AuthState { get; set; }
+
+    private LoginUserCommand model = new();
+
+    private async Task LoginAsync()
+    {
+        var result = await AuthService.LoginAsync(model);
+
+        if (result.IsSuccess)
+        {
+            Snackbar.Add("You have successfully logged in", Severity.Success);
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
+        }
+    }
+}

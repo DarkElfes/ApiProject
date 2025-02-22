@@ -1,0 +1,28 @@
+﻿@using ApiProject.Shared.Cases.Response
+
+<MudCard Elevation="2">
+    <MudCardMedia Image="@Item.ImgUrl" Style="background-size: cover; aspect-ratio: 1; height: auto" />
+    <MudCardContent>
+        <MudText Style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap" Typo="Typo.h5">@Item.Name</MudText>
+        <MudText Typo="Typo.body2">@Item.Model</MudText>
+    </MudCardContent>
+    <MudCardActions>
+
+        <MudButton Variant="Variant.Outlined" Size="Size.Large"
+                   Color="Color.Secondary">@Item.Price ₴</MudButton>
+        <AuthorizeView Roles="Admin">
+            <MudSpacer />
+            <MudButton StartIcon="@Icons.Material.Filled.Edit"
+                       IconSize="Size.Small"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary">
+                Edit
+            </MudButton>
+        </AuthorizeView>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public required PhoneCaseResponse Item { get; set; }
+}

@@ -4,7 +4,7 @@
 <MudThemeProvider IsDarkMode="true" />
 <MudPopoverProvider />
 
-@* Needed for dialogs *@
+@* Needed for dialogs *@ 
 <MudDialogProvider />
 
 @* Needed for snackbars *@
@@ -12,9 +12,42 @@
 
 
 <MudLayout>
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium">
+    @if (!Navigation.Uri.Contains("/auth"))
+    {
+        <MudAppBar Elevation="4">
+            <MudText Color="Color.Primary" Style="font-family: monospace" Typo="Typo.h5">Case Shop</MudText>
+
+            <MudSpacer />
+
+            <AuthorizeView>
+                <Authorized>
+                    <MudButton Color="Color.Primary"
+                               OnClick="@(() => Navigation.NavigateTo("/profile"))">
+                        @context.User.Identity!.Name
+                    </MudButton>
+                </Authorized>
+                <NotAuthorized>
+                    <MudButton Color="Color.Primary"
+                               OnClick="@(() => Navigation.NavigateTo("/auth"))">
+                        Login
+                    </MudButton>
+                </NotAuthorized>
+            </AuthorizeView>
+        </MudAppBar>
+    }
+    <MudMainContent Class="pt-20">
+        <MudContainer>
             @Body
         </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+@code {
+    [Inject] public required NavigationManager Navigation { get; set; }
+
+    private bool authOverlayVisible;
+
+    private void ToggleOverlay()
+        => authOverlayVisible = !authOverlayVisible;
+}
+

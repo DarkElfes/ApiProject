@@ -1,27 +1,51 @@
-﻿using ApiProject.Shared.Users;
+﻿using ApiProject.Shared.Users.Commands;
+using ApiProject.Shared.Users.Response;
+using Blazored.LocalStorage;
 using FluentResults;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Caching.Memory;
 using System.Net.Http.Json;
 
 namespace ApiProject.Client.Web.Users;
 
 public class AuthService(
-    HttpClient _httpClient
+    HttpClient _httpClient,
+    ILocalStorageService _localStorage,
+    AuthenticationStateProvider _authStateProvider
     )
 {
-    public async Task LoginAsync(LoginUserRequest request)
+    public async Task SignOutAsync()
     {
-        
+        await _localStorage.RemoveItemAsync("Token");
+        await _authStateProvider.GetAuthenticationStateAsync();
     }
 
-    public async Task<Result<string>> RegisterAsync(RegisterUserRequest register)
-    {
-        var response = await _httpClient.PostAsJsonAsync("auth/register", register);
+    public async Task<Result> UpdateInfoAsync(UpdateUserCommand request)
+        => await HandleResponse(_httpClient.PostAsJsonAsync("update", request));
+    
+    public async Task<Result> LoginAsync(LoginUserCommand request)
+        => await HandleResponse(_httpClient.PostAsJsonAsync("login", request));
 
-        var content = await response.Content.ReadAsStringAsync();
+    public async Task<Result> RegisterAsync(RegisterUserCommand request)
+        => await HandleResponse(_httpClient.PostAsJsonAsync("register", request));
+
+    //public async Task<Result<string>> GoogleAuthAsync()
+
+
+    private async Task<Result> HandleResponse(Task<HttpResponseMessage> request)
+    {
+        var response = await request;
 
         if (!response.IsSuccessStatusCode)
-            return Result.Fail(content);
+        {
+            var problemDetails = await response.Content.ReadFromJsonAsync<Dictionary<string, object?>>();
+            return Result.Fail(problemDetails?["detail"]?.ToString() ?? "Unhandled error");
+        }
 
-        return Result.Ok(content);
+        var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+        await _localStorage.SetItemAsync("Auth", authResponse);
+        await _authStateProvider.GetAuthenticationStateAsync();
+        return Result.Ok();
+
     }
 }

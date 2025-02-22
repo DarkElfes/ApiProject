@@ -1,0 +1,41 @@
+﻿@page "/auth"
+@using ApiProject.Client.Web.Users
+@using ApiProject.Shared.Users
+
+@implements IDisposable
+
+<Breadcrumbs />
+<MudPaper MaxWidth="500px" Elevation="5" Class="pa-4" Square>
+    @if (authState.IsLogin)
+    {
+        <LoginForm AuthState="@authState" />
+    }
+    else
+    {
+        <RegisterForm AuthState="@authState" />
+    }
+ </MudPaper>
+
+@code {
+    private AuthState authState { get; set; } = new();
+
+    protected override void OnInitialized()
+        => authState.AuthStateChanged += StateHasChanged;
+
+    public void Dispose()
+        => authState.AuthStateChanged -= StateHasChanged;
+
+
+    public class AuthState
+    {
+
+        public bool IsLogin { get; private set; } = true;
+        public event Action? AuthStateChanged;
+
+        public void ChangForm()
+        {
+            IsLogin = !IsLogin;
+            AuthStateChanged?.Invoke();
+        }
+    }
+}

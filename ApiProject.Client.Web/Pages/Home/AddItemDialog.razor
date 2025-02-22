@@ -1,0 +1,71 @@
+﻿@using ApiProject.Client.Web.PhoneCases
+@using ApiProject.Shared.Cases.Request
+
+<MudDialog Gutters Style="width: 400px">
+    <DialogContent>
+        <EditForm Model="@model" OnValidSubmit="CreateAsync" FormName="CreateNewItem">
+            <MudText Typo="Typo.h5" Color="Color.Primary">Create new item</MudText>
+            <DataAnnotationsValidator />
+
+            <MudStack Spacing="2">
+                <MudTextField Label="Name"
+                              @bind-Value="model.Name"
+                              For="@(() => model.Name)"
+                              OnlyValidateIfDirty />
+
+                <MudTextField Label="Image Url"
+                              @bind-Value="model.ImgUrl"
+                              For="@(() => model.ImgUrl)"
+                              OnlyValidateIfDirty />
+
+                <MudTextField Label="Color"
+                              @bind-Value="model.Color"
+                              For="@(() => model.Color)"
+                              OnlyValidateIfDirty />
+
+                <MudTextField Label="Prices"
+                              @bind-Value="model.Price"
+                              For="@(() => model.Price)"
+                              OnlyValidateIfDirty />
+
+                <MudTextField Label="Stock"
+                              @bind-Value="model.Stock"
+                              For="@(() => model.Stock)"
+                              OnlyValidateIfDirty />
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Class="align-self-end"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled">
+                    Create
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Inject] public required PhoneCaseService PhoneCaseService { get; set; }
+    [Inject] public required ISnackbar Snackbar { get; set; }
+
+    [CascadingParameter]
+    public required IMudDialogInstance MudDialog { get; set; }
+
+    private CreatePhoneCaseCommand model = new();
+
+    private async Task CreateAsync()
+    {
+        var result = await PhoneCaseService.CreateAsync(model);
+
+        if (result.IsSuccess)
+        {
+            Snackbar.Add("New item was sucessfully added", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(result.Value));
+        }
+        else
+        {
+            Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
+        }
+    }
+
+}

@@ -1,0 +1,42 @@
+﻿
+<MudBreadcrumbs Items="@_items"></MudBreadcrumbs>
+
+@code {
+    [Inject] public required NavigationManager Navigation { get; set; }
+
+    private List<BreadcrumbItem> _items = [];
+
+    protected override void OnInitialized()
+    {
+        string baseUri = Navigation.BaseUri;
+
+        string relativePath = Navigation.Uri.Replace(baseUri, "");
+        var pathSegments = relativePath.Split("/");
+
+        // Add Home as first page
+        _items.Add(new("Home", baseUri));
+
+        string curPath = baseUri;
+
+        for (int i = 0; i < pathSegments.Length; i++)
+        {
+            string segment = pathSegments[i];
+            curPath += $"{segment}/";
+
+            if (i != pathSegments.Length - 1)
+            {
+                _items.Add(new(CapitalizeString(segment), curPath));
+            }
+            else
+            {
+                // Add Current page as last with disabled link
+                _items.Add(new(CapitalizeString(segment), href: null, disabled: true));
+            }
+        }
+
+    }
+
+
+    private string CapitalizeString(string name)
+        => char.ToUpper(name[0]) + name.Substring(1);
+}
