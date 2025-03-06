@@ -1,6 +1,5 @@
 ﻿using ApiProject.Application.Abstractions.Authentication;
 using ApiProject.Domain.Users;
-using ApiProject.Shared.Abstractions.Result;
 using ApiProject.Shared.Users.Commands;
 using ApiProject.Shared.Users.Response;
 using Microsoft.AspNetCore.Identity;
@@ -14,9 +13,7 @@ internal sealed class LoginUserHandler(
 {
     public async Task<Result<AuthResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(request.Email);
-
-        if (user is null)
+        if(await _userRepository.GetByEmailAsync(request.Email) is not User user)
         {
             return UserErrors.Login.NotFoundByEmail;
         }
@@ -24,7 +21,7 @@ internal sealed class LoginUserHandler(
             .VerifyHashedPassword(user, user.PasswordHash, request.Password)
             .Equals(PasswordVerificationResult.Failed))
         {
-            return UserErrors.Login.IncorrectPassword;
+            return UserErrors.IncorrectPassword;
         }
 
         return new AuthResponse(_tokenProvider.Create(user));

@@ -11,7 +11,6 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
             .Length(1, 20);
 
         RuleFor(r => r.Password)
-            .NotEmpty()
             .Length(5, 20);
     }
 }

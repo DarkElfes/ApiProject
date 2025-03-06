@@ -13,9 +13,11 @@ public class PhoneCaseModule : ICarterModule
     {
         var phoneCaseGroup = app.MapGroup("/phone-case");
 
-
-        phoneCaseGroup.MapGet("/page/{pageNumber}", async (short pageNumber, ISender sender)
-            => (await sender.Send(new GetCases.Query { PageNumber = pageNumber})).Match());
+        phoneCaseGroup.MapGet("/page/{pageNumber?}", async (int? pageNumber, int? pageSize, ISender sender)
+            => (await sender.Send(new GetPage.Query { PageNumber = pageNumber ?? 1, PageSize = pageSize })).Match())
+            .RequireAuthorization(policy => policy.RequireRole("Admin", "User"))
+            .Produces<PhoneCaseResponse[]>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         phoneCaseGroup.MapPost("/create", async (CreatePhoneCaseCommand request, ISender sender)
             => (await sender.Send(request)).Match())
@@ -24,8 +26,11 @@ public class PhoneCaseModule : ICarterModule
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
-        phoneCaseGroup.MapPost("/update", async (UpdatePhoneCaseCommand request, ISender sender)
+        phoneCaseGroup.MapPut("/update", async (UpdatePhoneCaseCommand request, ISender sender)
             => (await sender.Send(request)).Match())
-            .RequireAuthorization(policy => policy.RequireRole("Admin"));
+            .RequireAuthorization(policy => policy.RequireRole("Admin"))
+            .Produces<PhoneCaseResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden);
     }
 }

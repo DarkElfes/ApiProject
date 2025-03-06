@@ -4,6 +4,8 @@
 @code {
     [Inject] public required NavigationManager Navigation { get; set; }
 
+    [Parameter] public bool DisableNavigation { get; set; }
+
     private List<BreadcrumbItem> _items = [];
 
     protected override void OnInitialized()
@@ -14,7 +16,7 @@
         var pathSegments = relativePath.Split("/");
 
         // Add Home as first page
-        _items.Add(new("Home", baseUri));
+        _items.Add(new("Home", href: baseUri, disabled: DisableNavigation));
 
         string curPath = baseUri;
 
@@ -25,7 +27,7 @@
 
             if (i != pathSegments.Length - 1)
             {
-                _items.Add(new(CapitalizeString(segment), curPath));
+                _items.Add(new(CapitalizeString(segment), href: curPath, disabled: DisableNavigation));
             }
             else
             {

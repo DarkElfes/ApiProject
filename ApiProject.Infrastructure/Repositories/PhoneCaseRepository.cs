@@ -7,11 +7,13 @@ internal sealed class PhoneCaseRepository(
     AppDbContext dbContext
     ) : Repository<PhoneCase>(dbContext), IPhoneCaseRepository
 {
-    public async Task<IEnumerable<PhoneCase>> GetRangeAsync(short pageNumber, short pageSize = 10)
+    static readonly byte s_pageSize = 10;
+
+    public async Task<IEnumerable<PhoneCase>> GetRangeAsync(int pageNumber, int? pageSize)
     {
         return await DbContext.PhoneCases
             .Skip((pageNumber - 1) * 10)
-            .Take(pageSize)
+            .Take(pageSize ?? s_pageSize)
             .ToListAsync();
     }
 }

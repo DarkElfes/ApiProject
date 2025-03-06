@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using System.Net.Http.Json;
 
-namespace ApiProject.Client.Web.Users;
+namespace ApiProject.Client.Web.Features.Users;
 
 public class AuthService(
     HttpClient _httpClient,
@@ -16,20 +16,15 @@ public class AuthService(
 {
     public async Task SignOutAsync()
     {
-        await _localStorage.RemoveItemAsync("Token");
+        await _localStorage.RemoveItemAsync("Auth");
         await _authStateProvider.GetAuthenticationStateAsync();
     }
 
-    public async Task<Result> UpdateInfoAsync(UpdateUserCommand request)
-        => await HandleResponse(_httpClient.PostAsJsonAsync("update", request));
-    
     public async Task<Result> LoginAsync(LoginUserCommand request)
         => await HandleResponse(_httpClient.PostAsJsonAsync("login", request));
 
     public async Task<Result> RegisterAsync(RegisterUserCommand request)
         => await HandleResponse(_httpClient.PostAsJsonAsync("register", request));
-
-    //public async Task<Result<string>> GoogleAuthAsync()
 
 
     private async Task<Result> HandleResponse(Task<HttpResponseMessage> request)

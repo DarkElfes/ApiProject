@@ -1,41 +1,38 @@
 ﻿@page "/profile"
 @using System.Security.Claims
-@using ApiProject.Client.Web.Users
 @using ApiProject.Shared.Users.Commands
 
 @attribute [Authorize]
 
-
 <Breadcrumbs />
 <MudPaper Elevation="4" Class="pa-4">
     <AuthorizeView Context="userContext">
-        <EditForm Model="@model" OnValidSubmit="UpdateAsync" FormName="UpdateUserInfo">
-            <MudStack Spacing="2">
+        <MudStack Spacing="6">
+
+            <MudStack>
                 <MudText Color="Color.Primary" Typo="Typo.h5">Profile</MudText>
-                <DataAnnotationsValidator />
+                <MudTextField Label="Name" T="string" ReadOnly
+                              AdornmentIcon="@Icons.Material.Filled.Edit" Adornment="Adornment.End" AdornmentColor="Color.Primary" OnAdornmentClick="UpdateUsernameAsync"
+                              Text="@userContext.User.Identity!.Name" />
 
-                <MudTextField Label="Name"
-                              @bind-Value="model.Username"
-                              For="(() => model.Username)"
-                              Text="@userContext.User.Identity!.Name"
-                              OnlyValidateIfDirty />
-                <MudTextField Label="Email"
-                              T="string"
+                <MudTextField Label="Email" T="string" ReadOnly
                               AdornmentText="Cannot be changed" Adornment="Adornment.End" AdornmentColor="Color.Warning"
-                              ReadOnly
                               Text="@userContext.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))!.Value" />
-                <MudTextField Label="Password"
-                              @bind-Value="model.Password"
-                              For="@(() =>model.Password)"
-                              InputType="InputType.Password"
-                              OnlyValidateIfDirty />
-
-                <MudStack Row Justify="Justify.FlexEnd">
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" ButtonType="ButtonType.Submit">Update info</MudButton>
-                    <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="SignOutAsync">Logout</MudButton>
-                </MudStack>
             </MudStack>
-        </EditForm>
+
+            <MudStack Row Justify="Justify.SpaceBetween">
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Outlined"
+                           OnClick="UpdatePasswordAsync">
+                    Change Password
+                </MudButton>
+                <MudButton Color="Color.Secondary"
+                           Variant="Variant.Filled"
+                           OnClick="SignOutAsync">
+                    Logout
+                </MudButton>
+            </MudStack>
+        </MudStack>
     </AuthorizeView>
 </MudPaper>
 
@@ -44,21 +41,11 @@
     [Inject] public required AuthService AuthService { get; set; }
     [Inject] public required ISnackbar Snackbar { get; set; }
 
-    private UpdateUserCommand model = new();
+    private Task UpdateUsernameAsync()
+        => Task.FromResult(Snackbar.Add("Not inplemented yet", Severity.Error));
 
-    private async Task UpdateAsync()
-    {
-        var result = await AuthService.UpdateInfoAsync(model);
-
-        if (result.IsSuccess)
-        {
-            Snackbar.Add("Info is successully updated", Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
-        }
-    }
+    private Task UpdatePasswordAsync()
+        => Task.FromResult(Snackbar.Add("Not inplemented yet", Severity.Error));
 
     private async Task SignOutAsync()
         => await AuthService.SignOutAsync();

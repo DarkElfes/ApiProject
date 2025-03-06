@@ -1,6 +1,7 @@
 ﻿@page "/"
-@using ApiProject.Client.Web.PhoneCases
 @using ApiProject.Shared.Cases.Response
+
+@attribute [Authorize]
 
 <MudStack AlignItems="AlignItems.Center">
     @if (isLoading)
@@ -27,23 +28,23 @@
     }
 </MudStack>
 
-
 <AuthorizeView Roles="Admin">
     <MudIconButton OnClick="CreateAsync"
-                   Style="position: absolute; right: 10px; top: 70px"
-                   Icon="@Icons.Material.Filled.Add"
-                   Size="Size.Large"
-                   Color="Color.Primary" />
+    Style="position: absolute; right: 10px; top: 70px"
+    Icon="@Icons.Material.Filled.Add"
+    Size="Size.Large"
+    Color="Color.Primary" />
 </AuthorizeView>
 
 @code {
     [Inject] public required NavigationManager Navigation { get; set; }
     [Inject] public required PhoneCaseService PhoneCaseService { get; set; }
     [Inject] public required IDialogService DialogService { get; set; }
+    [Inject] public required ISnackbar Snackbar { get; set; }
 
     private short pageNumber = 1;
     private bool isLoading = true;
-    private List<PhoneCaseResponse> phoneCases = [];
+    private List<PhoneCaseResponse> phoneCases = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,6 +53,9 @@
         if (result.IsSuccess)
         {
             phoneCases = result.Value.ToList();
+        }
+        else{
+            Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
         }
 
         isLoading = false;

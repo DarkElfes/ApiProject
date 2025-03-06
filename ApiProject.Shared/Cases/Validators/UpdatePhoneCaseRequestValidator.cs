@@ -12,6 +12,6 @@ public class UpdatePhoneCaseRequestValidator : AbstractValidator<UpdatePhoneCase
             .NotEmpty();
 
         RuleFor(r => r.Sold)
-            .NotEmpty();
+            .NotNull();
     }
 }

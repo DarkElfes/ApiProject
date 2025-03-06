@@ -1,11 +1,10 @@
-﻿@using ApiProject.Client.Web.PhoneCases
-@using ApiProject.Shared.Cases.Request
+﻿@using ApiProject.Shared.Cases.Request
 
 <MudDialog Gutters Style="width: 400px">
     <DialogContent>
         <EditForm Model="@model" OnValidSubmit="CreateAsync" FormName="CreateNewItem">
             <MudText Typo="Typo.h5" Color="Color.Primary">Create new item</MudText>
-            <DataAnnotationsValidator />
+            <FluentValidationValidator />
 
             <MudStack Spacing="2">
                 <MudTextField Label="Name"
@@ -51,9 +50,9 @@
     [CascadingParameter]
     public required IMudDialogInstance MudDialog { get; set; }
 
-    private CreatePhoneCaseCommand model = new();
+    CreatePhoneCaseCommand model = new();
 
-    private async Task CreateAsync()
+    async Task CreateAsync()
     {
         var result = await PhoneCaseService.CreateAsync(model);
 
@@ -67,5 +66,4 @@
             Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
         }
     }
-
 }

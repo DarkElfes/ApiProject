@@ -1,7 +1,8 @@
 using ApiProject.Client.Web;
-using ApiProject.Client.Web.PhoneCases;
-using ApiProject.Client.Web.Users;
+using ApiProject.Client.Web.Features.PhoneCases;
+using ApiProject.Client.Web.Features.Users;
 using Blazored.LocalStorage;
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -13,6 +14,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
+
+// Add Fluent validators for models
+builder.Services.AddValidatorsFromAssembly(typeof(ApiProject.Shared.Users.Validators.LoginUserCommandValidator).Assembly);
 
 // Add authentication api service
 builder.Services.AddHttpClient<AuthService>(config =>

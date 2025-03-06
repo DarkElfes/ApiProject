@@ -2,7 +2,7 @@
 using Blazored.LocalStorage;
 using System.Net.Http.Headers;
 
-namespace ApiProject.Client.Web.Users;
+namespace ApiProject.Client.Web.Features.Users;
 public class AuthHandler(
     ILocalStorageService _localStorage
     ) : DelegatingHandler
@@ -11,7 +11,7 @@ public class AuthHandler(
     {
         var item = await _localStorage.GetItemAsync<AuthResponse>("Auth", cancellationToken);
 
-        if (item is AuthResponse authResponse &&  !string.IsNullOrWhiteSpace(authResponse.Token))
+        if (item is AuthResponse authResponse && !string.IsNullOrWhiteSpace(authResponse.Token))
         {
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.Token);
         }

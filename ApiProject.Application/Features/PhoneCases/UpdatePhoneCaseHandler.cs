@@ -1,5 +1,4 @@
 ﻿using ApiProject.Domain.PhoneCases;
-using ApiProject.Shared.Abstractions.Result;
 using ApiProject.Shared.Cases.Request;
 using ApiProject.Shared.Cases.Response;
 using Mapster;
@@ -17,7 +16,8 @@ internal sealed class UpdatePhoneCaseHandler(
         {
             return PhoneCaseErrors.NotFound;
         }
-        phoneCase = command.Adapt<PhoneCase>();
+
+        command.Adapt(phoneCase);
 
         _phoneCaseRepository.Update(phoneCase);
         await _phoneCaseRepository.SaveChangesAsync();

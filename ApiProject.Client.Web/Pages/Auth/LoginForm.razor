@@ -1,19 +1,18 @@
-﻿@using ApiProject.Client.Web.Users
-@using ApiProject.Shared.Users;
+﻿@using ApiProject.Shared.Users;
 @using ApiProject.Shared.Users.Commands
 @using static ApiProject.Client.Web.Pages.Auth.Auth
 
 <EditForm Model="@model" OnValidSubmit="LoginAsync" FormName="Login">
     <MudStack Spacing="2">
         <MudText Align="Align.Center" Typo="Typo.h5" Color="Color.Primary">Login</MudText>
-        <DataAnnotationsValidator />
+        <Blazored.FluentValidation.FluentValidationValidator />
 
         <MudTextField Label="Email" @bind-Value="model.Email" For="@(() => model.Email)" OnlyValidateIfDirty />
         <MudTextField Label="Password" @bind-Value="model.Password" For="@(() => model.Password)" OnlyValidateIfDirty />
 
         <MudStack Row Justify="Justify.SpaceBetween">
             <MudText Class="align-self-end">Not have account? <MudLink OnClick="@AuthState.ChangForm">Register</MudLink></MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="align-self-end">Login</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@AuthState.InAction" Class="align-self-end">Login</MudButton>
         </MudStack>
     </MudStack>
 </EditForm>
@@ -25,10 +24,11 @@
 
     [Parameter] public required AuthState AuthState { get; set; }
 
-    private LoginUserCommand model = new();
+    LoginUserCommand model = new();
 
-    private async Task LoginAsync()
+    async Task LoginAsync()
     {
+        AuthState.SetActionState(true);
         var result = await AuthService.LoginAsync(model);
 
         if (result.IsSuccess)
@@ -40,5 +40,6 @@
         {
             Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
         }
+        AuthState.SetActionState(false);
     }
 }

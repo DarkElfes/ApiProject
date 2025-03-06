@@ -15,14 +15,14 @@ internal sealed class RegisterUserHandler(
 {
     public async Task<Result<AuthResponse>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(request.Email);
-        if (user != null)
+        if(await _userRepository.GetByEmailAsync(request.Email) is not null)
         {
             return UserErrors.Register.AlreadyExist;
         }
 
-        user = request.Adapt<User>();
+        User user = request.Adapt<User>();
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
+        user.Role = "User";
 
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();

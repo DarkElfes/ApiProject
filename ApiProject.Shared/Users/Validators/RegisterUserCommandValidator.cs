@@ -6,10 +6,10 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
 {
     public RegisterUserCommandValidator()
     {
-        Include(new LoginUserCommandValidator());
-
-        RuleFor(r => r.Username)
+        RuleFor(x => x.Username)
             .NotEmpty()
-            .Length(1, 20);
+            .Length(3, 20);
+
+        Include(new LoginUserCommandValidator());
     }
 }

@@ -1,6 +1,4 @@
-﻿using ApiProject.Shared.Abstractions.Result;
-
-namespace ApiProject.Application.Features.PhoneCases;
+﻿namespace ApiProject.Application.Features.PhoneCases;
 
 public static class PhoneCaseErrors
 {

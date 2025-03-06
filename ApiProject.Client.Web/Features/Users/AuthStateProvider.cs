@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
-namespace ApiProject.Client.Web.Users;
+namespace ApiProject.Client.Web.Features.Users;
 
 public class AuthStateProvider(
     ILocalStorageService _localStorage

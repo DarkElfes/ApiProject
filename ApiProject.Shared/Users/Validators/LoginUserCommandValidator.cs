@@ -6,11 +6,11 @@ public class LoginUserCommandValidator : AbstractValidator<LoginUserCommand>
 {
     public LoginUserCommandValidator()
     {
-        RuleFor(r => r.Email)
+        RuleFor(x => x.Email)
             .NotEmpty()
             .EmailAddress();
 
-        RuleFor(r => r.Password)
+        RuleFor(x => x.Password)
             .NotEmpty()
             .Length(5, 20);
     }

@@ -1,10 +1,9 @@
 ﻿@page "/auth"
-@using ApiProject.Client.Web.Users
 @using ApiProject.Shared.Users
 
 @implements IDisposable
 
-<Breadcrumbs />
+<Breadcrumbs DisableNavigation />
 <MudPaper MaxWidth="500px" Elevation="5" Class="pa-4" Square>
     @if (authState.IsLogin)
     {
@@ -14,7 +13,7 @@
     {
         <RegisterForm AuthState="@authState" />
     }
- </MudPaper>
+</MudPaper>
 
 @code {
     private AuthState authState { get; set; } = new();
@@ -28,13 +27,19 @@
 
     public class AuthState
     {
-
         public bool IsLogin { get; private set; } = true;
+        public bool InAction { get; private set; }
         public event Action? AuthStateChanged;
 
         public void ChangForm()
         {
             IsLogin = !IsLogin;
+            AuthStateChanged?.Invoke();
+        }
+
+        public void SetActionState(bool inAction)
+        {
+            InAction = inAction;
             AuthStateChanged?.Invoke();
         }
     }

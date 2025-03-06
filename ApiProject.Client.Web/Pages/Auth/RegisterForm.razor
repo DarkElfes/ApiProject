@@ -1,20 +1,35 @@
-﻿@using ApiProject.Client.Web.Users
-@using ApiProject.Shared.Users;
+﻿@using ApiProject.Shared.Users;
 @using ApiProject.Shared.Users.Commands
 @using static ApiProject.Client.Web.Pages.Auth.Auth
 
 <EditForm Model="@model" OnValidSubmit="RegisterAsync" FormName="Register">
     <MudStack Spacing="2">
         <MudText Align="Align.Center" Typo="Typo.h5" Color="Color.Primary">Rregister</MudText>
-        <DataAnnotationsValidator />
+        <Blazored.FluentValidation.FluentValidationValidator/>
 
-        <MudTextField Label="Username" @bind-Value="model.Username" For="@(() => model.Username)" OnlyValidateIfDirty />
-        <MudTextField Label="Email" @bind-Value="model.Email" For="@(() => model.Email)" OnlyValidateIfDirty />
-        <MudTextField Label="Password" @bind-Value="model.Password" For="@(() => model.Password)" OnlyValidateIfDirty />
+        <MudTextField Label="Username"
+                      @bind-Value="model.Username"
+                      For="@(() => model.Username)"
+                      OnlyValidateIfDirty />
+        <MudTextField Label="Email"
+                      @bind-Value="model.Email"
+                      For="@(() => model.Email)"
+                      OnlyValidateIfDirty />
+        <MudTextField Label="Password"
+                      @bind-Value="model.Password"
+                      For="@(() => model.Password)"
+                      OnlyValidateIfDirty />
 
         <MudStack Row Justify="Justify.SpaceBetween">
-            <MudText Class="align-self-end">Already exist account? <MudLink OnClick="AuthState.ChangForm">Login</MudLink></MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Register</MudButton>
+            <MudText Class="align-self-end">
+                Already exist account? <MudLink OnClick="AuthState.ChangForm">Login</MudLink>
+            </MudText>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Disabled="@AuthState.InAction"
+                       ButtonType="ButtonType.Submit">
+                Register
+            </MudButton>
         </MudStack>
     </MudStack>
 </EditForm>
@@ -26,10 +41,11 @@
 
     [Parameter] public required AuthState AuthState { get; set; }
 
-    private RegisterUserCommand model { get; set; } = new();
+    RegisterUserCommand model { get; set; } = new();
 
     async Task RegisterAsync()
     {
+        AuthState.SetActionState(true);
         var result = await AuthService.RegisterAsync(model);
 
         if (result.IsSuccess)
@@ -41,6 +57,7 @@
         {
             Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
         }
+        AuthState.SetActionState(false);
     }
 }
 

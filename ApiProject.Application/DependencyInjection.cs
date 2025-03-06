@@ -1,4 +1,5 @@
 ﻿global using MediatR;
+global using ApiProject.Shared.Abstractions.Result;
 using ApiProject.Application.Behaviors;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,8 @@ public static class DependencyInjection
         var assembly = typeof(DependencyInjection).Assembly;
 
         // Add FluentValidation
-        services.AddValidatorsFromAssembly(typeof(ApiProject.Shared.Users.Commands.RegisterUserCommand).Assembly);
+        services.AddValidatorsFromAssembly(assembly);
+        services.AddValidatorsFromAssembly(typeof(Shared.Users.Commands.RegisterUserCommand).Assembly);
 
         // Add MediatR 
         services.AddMediatR(cfg =>

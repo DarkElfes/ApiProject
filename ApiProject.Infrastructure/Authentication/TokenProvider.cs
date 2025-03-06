@@ -1,4 +1,6 @@
-﻿using ApiProject.Application.Abstractions.Authentication;
+﻿
+
+using ApiProject.Application.Abstractions.Authentication;
 using ApiProject.Domain.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
