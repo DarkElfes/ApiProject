@@ -1,6 +1,7 @@
 using ApiProject.Client.Web;
 using ApiProject.Client.Web.Features.PhoneCases;
 using ApiProject.Client.Web.Features.Users;
+using ApiProject.Client.Web.Services;
 using Blazored.LocalStorage;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -18,16 +19,23 @@ builder.Services.AddMudServices();
 // Add Fluent validators for models
 builder.Services.AddValidatorsFromAssembly(typeof(ApiProject.Shared.Users.Validators.LoginUserCommandValidator).Assembly);
 
-// Add authentication api service
+// Add auth api service
 builder.Services.AddHttpClient<AuthService>(config =>
-    config.BaseAddress = new($"{builder.Configuration["ApiUrl"]!}/auth/"))
+    config.BaseAddress = new($"{builder.Configuration["ApiUrl"]!}/auth/"));
+
+// Add user api service
+builder.Services.AddHttpClient<UserService>(config =>
+    config.BaseAddress = new($"{builder.Configuration["ApiUrl"]!}/user/"))
     .AddHttpMessageHandler<AuthHandler>();
 
 // Add phone cases api service
 builder.Services.AddHttpClient<PhoneCaseService>(config =>
     config.BaseAddress = new($"{builder.Configuration["ApiUrl"]!}/phone-case/"))
-    .AddHttpMessageHandler<AuthHandler>(); ;
+    .AddHttpMessageHandler<AuthHandler>();
 
+
+// Add veil service
+builder.Services.AddScoped<VeilService>();
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();

@@ -5,7 +5,7 @@
 <EditForm Model="@model" OnValidSubmit="RegisterAsync" FormName="Register">
     <MudStack Spacing="2">
         <MudText Align="Align.Center" Typo="Typo.h5" Color="Color.Primary">Rregister</MudText>
-        <Blazored.FluentValidation.FluentValidationValidator/>
+        <Blazored.FluentValidation.FluentValidationValidator />
 
         <MudTextField Label="Username"
                       @bind-Value="model.Username"
@@ -44,8 +44,8 @@
     RegisterUserCommand model { get; set; } = new();
 
     async Task RegisterAsync()
+        => await AuthState.DoActionAsync(Task.Run(async () =>
     {
-        AuthState.SetActionState(true);
         var result = await AuthService.RegisterAsync(model);
 
         if (result.IsSuccess)
@@ -57,7 +57,6 @@
         {
             Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
         }
-        AuthState.SetActionState(false);
-    }
+    }));
 }
 

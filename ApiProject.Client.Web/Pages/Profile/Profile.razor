@@ -12,7 +12,7 @@
             <MudStack>
                 <MudText Color="Color.Primary" Typo="Typo.h5">Profile</MudText>
                 <MudTextField Label="Name" T="string" ReadOnly
-                              AdornmentIcon="@Icons.Material.Filled.Edit" Adornment="Adornment.End" AdornmentColor="Color.Primary" OnAdornmentClick="UpdateUsernameAsync"
+                              AdornmentIcon="@Icons.Material.Filled.Edit" Adornment="Adornment.End" AdornmentColor="Color.Primary" OnAdornmentClick="NotImplemented"
                               Text="@userContext.User.Identity!.Name" />
 
                 <MudTextField Label="Email" T="string" ReadOnly
@@ -20,15 +20,24 @@
                               Text="@userContext.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))!.Value" />
             </MudStack>
 
-            <MudStack Row Justify="Justify.SpaceBetween">
+            <MudStack Row Justify="Justify.FlexEnd">
                 <MudButton Color="Color.Primary"
                            Variant="Variant.Outlined"
-                           OnClick="UpdatePasswordAsync">
+                           OnClick="NotImplemented">
                     Change Password
                 </MudButton>
+
+                <AuthorizeView Roles="User">
+                    <MudButton Color="Color.Secondary"
+                               Variant="Variant.Filled"
+                               OnClick="@(async () => await UserService.DeleteUserAsync())">
+                        Delete Account
+                    </MudButton>
+                </AuthorizeView>
+
                 <MudButton Color="Color.Secondary"
                            Variant="Variant.Filled"
-                           OnClick="SignOutAsync">
+                           OnClick="@(async () => await AuthService.SignOutAsync())">
                     Logout
                 </MudButton>
             </MudStack>
@@ -37,17 +46,11 @@
 </MudPaper>
 
 @code {
-    [Inject] public required NavigationManager Navigation { get; set; }
     [Inject] public required AuthService AuthService { get; set; }
+    [Inject] public required UserService UserService { get; set; }
     [Inject] public required ISnackbar Snackbar { get; set; }
 
-    private Task UpdateUsernameAsync()
+    private Task NotImplemented()
         => Task.FromResult(Snackbar.Add("Not inplemented yet", Severity.Error));
-
-    private Task UpdatePasswordAsync()
-        => Task.FromResult(Snackbar.Add("Not inplemented yet", Severity.Error));
-
-    private async Task SignOutAsync()
-        => await AuthService.SignOutAsync();
 }
 

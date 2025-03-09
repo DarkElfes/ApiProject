@@ -13,7 +13,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         var problemDetails = new ProblemDetails()
         {
             Title = "Global.InternalError",
-            Detail = exception.Message,
+            Detail = "Some internal error. Try later.",
             Instance = httpContext.Request.Path
         };
 
@@ -21,6 +21,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             problemDetails.Title = "Global.Validation.Failed";
             problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
+            problemDetails.Detail = fluentException.Message;
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             
             problemDetails.Extensions.Add("errors", fluentException.Errors.Select(e => e.ErrorMessage));

@@ -22,6 +22,9 @@ public static class DependencyInjection
         // Add Jwt provider
         services.AddScoped<ITokenProvider, TokenProvider>();
 
+        // Add Google auth service
+        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
         // Add Repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPhoneCaseRepository, PhoneCaseRepository>();

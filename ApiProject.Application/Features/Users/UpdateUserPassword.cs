@@ -33,7 +33,7 @@ public class UpdateUserPassword
             
             if(await _userRepository.GetByIdAsync(request.UserId) is not User user)
             {
-                return UserErrors.Update.NotFoundById;
+                return UserErrors.NotFoundById;
             }
             
             var passwordHasher = new PasswordHasher<User>();

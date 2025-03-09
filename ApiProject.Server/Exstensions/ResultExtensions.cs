@@ -4,6 +4,9 @@ namespace ApiProject.Server.Exstensions;
 
 public static class ResultExtensions
 {
+    public static IResult Match(this Result result)
+        => result.IsSuccess ? Results.Ok() : result.ToProblemDetails();
+
     public static IResult Match<T>(this Result<T> result)
         =>  result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
 

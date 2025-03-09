@@ -4,18 +4,31 @@
 @implements IDisposable
 
 <Breadcrumbs DisableNavigation />
+
 <MudPaper MaxWidth="500px" Elevation="5" Class="pa-4" Square>
-    @if (authState.IsLogin)
-    {
-        <LoginForm AuthState="@authState" />
-    }
-    else
-    {
-        <RegisterForm AuthState="@authState" />
-    }
+    <MudStack Spacing="4">
+        @if (authState.IsLogin)
+        {
+            <LoginForm AuthState="@authState" />
+        }
+        else
+        {
+            <RegisterForm AuthState="@authState" />
+        }
+        <MudButton StartIcon="@Icons.Custom.Brands.Google"
+                   OnClick="LoginByGoogleAsync"
+                   Variant="Variant.Outlined"
+                   Disabled="@authState.InAction"
+                   Class="align-self-center"
+                   Color="Color.Primary">
+            Sign in with Google
+        </MudButton>
+    </MudStack>
 </MudPaper>
 
 @code {
+    [Inject] public required AuthService AuthService { get; set; }
+
     private AuthState authState { get; set; } = new();
 
     protected override void OnInitialized()
@@ -24,6 +37,9 @@
     public void Dispose()
         => authState.AuthStateChanged -= StateHasChanged;
 
+
+    async Task LoginByGoogleAsync()
+        => await authState.DoActionAsync(AuthService.GetChallangeForGoogleAsync());
 
     public class AuthState
     {
@@ -41,6 +57,13 @@
         {
             InAction = inAction;
             AuthStateChanged?.Invoke();
+        }
+
+        public async Task DoActionAsync(Task task)
+        {
+            SetActionState(true);
+            await task;
+            SetActionState(false);
         }
     }
 }

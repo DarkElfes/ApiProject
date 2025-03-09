@@ -1,4 +1,5 @@
-﻿using ApiProject.Application.Features.Users;
+﻿using ApiProject.Application.Abstractions.Authentication;
+using ApiProject.Application.Features.Users;
 using ApiProject.Server.Exstensions;
 using ApiProject.Shared.Users.Commands;
 using ApiProject.Shared.Users.Requests;
@@ -24,11 +25,25 @@ public class UserModule : ICarterModule
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
+        userAuthGroup.MapPost("/login/by-google", async (LoginUserByGoogleCommand request, ISender sender)
+            => (await sender.Send(request)).Match())
+            .WithName("LoginUserByGoogle")
+            .Produces<AuthResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
+
+
+        userAuthGroup.MapGet("/login/by-google/url", (IGoogleAuthService googleAuthService)
+            => Results.Ok(googleAuthService.GetGoogleAuthUrl()))
+            .WithName("GetGoogleChallangeUrl")
+            .Produces<string>(StatusCodes.Status200OK)
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
+
         userAuthGroup.MapPost("/register", async (RegisterUserCommand request, ISender sender)
             => (await sender.Send(request)).Match())
             .WithName("RegisterUser")
             .Produces<AuthResponse>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status409Conflict) 
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
 
@@ -46,6 +61,12 @@ public class UserModule : ICarterModule
                 UserId: GetUserId(context),
                 OldPassword: request.OldPassword,
                 NewPassword: request.NewPassword))).Match())
+            .RequireAuthorization();
+
+
+        // Add user delete endpoint
+        app.MapDelete("/user/delete", async (HttpContext context, ISender sender)
+            => (await sender.Send(new DeleteUser.Command(GetUserId(context)))).Match())
             .RequireAuthorization();
     }
 

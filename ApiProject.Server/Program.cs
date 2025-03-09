@@ -16,6 +16,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplicaction();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
 {
@@ -62,6 +63,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
 app.UseAuthentication();
 app.UseAuthorization();
 

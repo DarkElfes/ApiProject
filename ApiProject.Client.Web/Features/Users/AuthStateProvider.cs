@@ -1,7 +1,6 @@
 ﻿using ApiProject.Shared.Users.Response;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 

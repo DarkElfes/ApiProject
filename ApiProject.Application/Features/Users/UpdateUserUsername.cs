@@ -27,7 +27,7 @@ public class UpdateUserUsername
         {
             if(await _userRepository.GetByIdAsync(request.UserId) is not User user)
             {
-                return UserErrors.Update.NotFoundById;
+                return UserErrors.NotFoundById;
             }
             else if(request.NewUsername == user.Username)
             {

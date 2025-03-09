@@ -2,8 +2,9 @@
 using ApiProject.Shared.Users.Response;
 using Blazored.LocalStorage;
 using FluentResults;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Caching.Memory;
+using MudBlazor;
 using System.Net.Http.Json;
 
 namespace ApiProject.Client.Web.Features.Users;
@@ -11,6 +12,8 @@ namespace ApiProject.Client.Web.Features.Users;
 public class AuthService(
     HttpClient _httpClient,
     ILocalStorageService _localStorage,
+    NavigationManager _navigation,
+    ISnackbar _snackbar,
     AuthenticationStateProvider _authStateProvider
     )
 {
@@ -18,13 +21,25 @@ public class AuthService(
     {
         await _localStorage.RemoveItemAsync("Auth");
         await _authStateProvider.GetAuthenticationStateAsync();
+        _snackbar.Add("You're sign out");
     }
 
+
+    // Add basic JWT auth
     public async Task<Result> LoginAsync(LoginUserCommand request)
         => await HandleResponse(_httpClient.PostAsJsonAsync("login", request));
-
     public async Task<Result> RegisterAsync(RegisterUserCommand request)
         => await HandleResponse(_httpClient.PostAsJsonAsync("register", request));
+
+
+    // Add OAuth for Google
+    public async Task GetChallangeForGoogleAsync()
+    { 
+        var challangeUrl = await _httpClient.GetFromJsonAsync<string>("login/by-google/url");
+        _navigation.NavigateTo(challangeUrl);
+    }
+    public async Task LoginByGoogleAsync(LoginUserByGoogleCommand request)
+        => await HandleResponse(_httpClient.PostAsJsonAsync("login/by-google", request));
 
 
     private async Task<Result> HandleResponse(Task<HttpResponseMessage> request)
@@ -41,6 +56,5 @@ public class AuthService(
         await _localStorage.SetItemAsync("Auth", authResponse);
         await _authStateProvider.GetAuthenticationStateAsync();
         return Result.Ok();
-
     }
 }

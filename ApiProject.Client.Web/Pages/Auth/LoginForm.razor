@@ -27,19 +27,18 @@
     LoginUserCommand model = new();
 
     async Task LoginAsync()
-    {
-        AuthState.SetActionState(true);
-        var result = await AuthService.LoginAsync(model);
+        => await AuthState.DoActionAsync(Task.Run(async () =>
+        {
+            var result = await AuthService.LoginAsync(model);
 
-        if (result.IsSuccess)
-        {
-            Snackbar.Add("You have successfully logged in", Severity.Success);
-            Navigation.NavigateTo("/");
-        }
-        else
-        {
-            Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
-        }
-        AuthState.SetActionState(false);
-    }
+            if (result.IsSuccess)
+            {
+                Snackbar.Add("You have successfully logged in", Severity.Success);
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                Snackbar.Add(result.Errors.FirstOrDefault()!.Message, Severity.Error);
+            }
+        }));
 }
