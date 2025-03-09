@@ -17,6 +17,7 @@ public static class UserErrors
         public static readonly Error NotFoundByEmail = new("User.Login.NotFoundByEmail", ErrorType.NotFound, "User with this email not found.");
         public static readonly Error InvalidGrant = new("User.Login.ByGoogle.InvalidGrant", ErrorType.Problem, "Auth code is invalid or has an invalid format.");
         public static readonly Error InvalidRequest = new("User.Login.ByGoogle.InvalidRequest", ErrorType.Problem, "Auth code is missing.");
+        public static readonly Error PasswordNotSet = new("User.Login.ByGoogle.PasswordNotSet", ErrorType.Problem, "Password is not set for this user.");
     }
 
     public static class Update

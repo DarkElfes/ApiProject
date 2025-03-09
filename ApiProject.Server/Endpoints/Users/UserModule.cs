@@ -18,7 +18,17 @@ public class UserModule : ICarterModule
         var userAuthGroup = app.MapGroup("/auth");
 
         userAuthGroup.MapPost("/login", async (LoginUserCommand request, ISender sender)
-            => (await sender.Send(request)).Match())
+            =>
+            {
+                var result = await sender.Send(request);
+
+                if(result.Error == UserErrors.Login.PasswordNotSet)
+                {
+                    return Results.StatusCode(303);
+                }
+
+                return result.Match();
+            })
             .WithName("LoginUser")
             .Produces<AuthResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)

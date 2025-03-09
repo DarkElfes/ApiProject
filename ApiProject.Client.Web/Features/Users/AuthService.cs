@@ -46,7 +46,12 @@ public class AuthService(
     {
         var response = await request;
 
-        if (!response.IsSuccessStatusCode)
+        if(response.StatusCode == System.Net.HttpStatusCode.SeeOther)
+        {
+            await GetChallangeForGoogleAsync();
+            return Result.Fail("You need sign in again");
+        }
+        else if (!response.IsSuccessStatusCode)
         {
             var problemDetails = await response.Content.ReadFromJsonAsync<Dictionary<string, object?>>();
             return Result.Fail(problemDetails?["detail"]?.ToString() ?? "Unhandled error");

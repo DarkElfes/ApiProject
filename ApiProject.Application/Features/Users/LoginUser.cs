@@ -17,6 +17,10 @@ internal sealed class LoginUserHandler(
         {
             return UserErrors.Login.NotFoundByEmail;
         }
+        else if (user.PasswordHash is null)
+        {
+            return UserErrors.Login.PasswordNotSet;
+        }
         else if (new PasswordHasher<User>()
             .VerifyHashedPassword(user, user.PasswordHash, request.Password)
             .Equals(PasswordVerificationResult.Failed))
