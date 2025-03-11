@@ -15,7 +15,7 @@ internal sealed class LoginUserHandler(
     {
         if(await _userRepository.GetByEmailAsync(request.Email) is not User user)
         {
-            return UserErrors.Login.NotFoundByEmail;
+            return UserErrors.Login.IncorrectData;
         }
         else if (user.PasswordHash is null)
         {
@@ -25,7 +25,7 @@ internal sealed class LoginUserHandler(
             .VerifyHashedPassword(user, user.PasswordHash, request.Password)
             .Equals(PasswordVerificationResult.Failed))
         {
-            return UserErrors.IncorrectPassword;
+            return UserErrors.Login.IncorrectData;
         }
 
         return new AuthResponse(_tokenProvider.Create(user));

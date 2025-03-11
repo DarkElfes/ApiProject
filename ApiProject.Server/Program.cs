@@ -1,9 +1,11 @@
 using ApiProject.Application;
 using ApiProject.Infrastructure;
+using ApiProject.Server.Endpoints.OpenApiExstensions;
 using ApiProject.Server.Exceptions;
 using Carter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using System.Text;
 
 
@@ -44,14 +46,18 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(options =>
     {
         options.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+               .AllowAnyHeader()
+               .AllowAnyMethod();
     });
 });
 
 // Add global exception handler
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 // Add Carter
 builder.Services.AddCarter();
@@ -62,6 +68,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+        options.WithHttpBearerAuthentication(bearer => bearer.Token = "");
+    });
 }
 
 app.UseAuthentication();

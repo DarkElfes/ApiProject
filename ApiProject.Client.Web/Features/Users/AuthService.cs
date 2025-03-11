@@ -32,10 +32,16 @@ public class AuthService(
         => await HandleResponse(_httpClient.PostAsJsonAsync("register", request));
 
 
-    // Add OAuth for Google
+    // Add OpenID for Google
     public async Task GetChallangeForGoogleAsync()
-    { 
+    {
         var challangeUrl = await _httpClient.GetFromJsonAsync<string>("login/by-google/url");
+
+        if (challangeUrl is null)
+        {
+            _snackbar.Add("An Server error occurred when try auth by Google. Try later.", Severity.Error);
+            return;
+        }
         _navigation.NavigateTo(challangeUrl);
     }
     public async Task LoginByGoogleAsync(LoginUserByGoogleCommand request)
@@ -46,7 +52,7 @@ public class AuthService(
     {
         var response = await request;
 
-        if(response.StatusCode == System.Net.HttpStatusCode.SeeOther)
+        if (response.StatusCode == System.Net.HttpStatusCode.SeeOther)
         {
             await GetChallangeForGoogleAsync();
             return Result.Fail("You need sign in again");

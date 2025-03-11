@@ -35,13 +35,18 @@ public class UpdateUserPassword
             {
                 return UserErrors.NotFoundById;
             }
+
+            if(user.PasswordHash is null)
+            {
+                throw new ArgumentNullException(user.PasswordHash, "User password hash is null. I know it, but not fix :)");
+            }
             
             var passwordHasher = new PasswordHasher<User>();
 
             if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.OldPassword)
                 .Equals(PasswordVerificationResult.Failed))
             {
-                return UserErrors.IncorrectPassword;
+                return UserErrors.Update.IncorrectPassword;
             }
 
             user.PasswordHash = passwordHasher.HashPassword(user, request.NewPassword); ;

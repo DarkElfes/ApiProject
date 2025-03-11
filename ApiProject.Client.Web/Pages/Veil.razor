@@ -27,7 +27,7 @@
 @code {
     [Inject] public required VeilService VeilService { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         VeilService.OnShow += Update;
         VeilService.OnHide += Update;

@@ -16,11 +16,11 @@
             <RegisterForm AuthState="@authState" />
         }
         <MudButton StartIcon="@Icons.Custom.Brands.Google"
-                   OnClick="LoginByGoogleAsync"
-                   Variant="Variant.Outlined"
-                   Disabled="@authState.InAction"
-                   Class="align-self-center"
-                   Color="Color.Primary">
+        OnClick="LoginByGoogleAsync"
+        Variant="Variant.Outlined"
+        Disabled="@authState.InAction"
+        Class="align-self-center"
+        Color="Color.Primary">
             Sign in with Google
         </MudButton>
     </MudStack>
@@ -36,7 +36,6 @@
 
     public void Dispose()
         => authState.AuthStateChanged -= StateHasChanged;
-
 
     async Task LoginByGoogleAsync()
         => await authState.DoActionAsync(AuthService.GetChallangeForGoogleAsync());

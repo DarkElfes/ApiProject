@@ -19,14 +19,15 @@ builder.Services.AddMudServices();
 // Add Fluent validators for models
 builder.Services.AddValidatorsFromAssembly(typeof(ApiProject.Shared.Users.Validators.LoginUserCommandValidator).Assembly);
 
-// Add auth api service
-builder.Services.AddHttpClient<AuthService>(config =>
-    config.BaseAddress = new($"{builder.Configuration["ApiUrl"]!}/auth/"));
-
 // Add user api service
 builder.Services.AddHttpClient<UserService>(config =>
     config.BaseAddress = new($"{builder.Configuration["ApiUrl"]!}/user/"))
     .AddHttpMessageHandler<AuthHandler>();
+
+// Add auth api service
+builder.Services.AddHttpClient<AuthService>(config =>
+    config.BaseAddress = new($"{builder.Configuration["ApiUrl"]!}/user/auth/"));
+
 
 // Add phone cases api service
 builder.Services.AddHttpClient<PhoneCaseService>(config =>
