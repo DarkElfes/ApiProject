@@ -1,5 +1,10 @@
 # ApiProject
 
+## Contributors
+* [@DarkElfes](https://github.com/DarkElfes)
+* [@Pitbmak](https://github.com/Pitbmak) University email account
+
+## Overview
 ApiProject - is example of RESTful API with using JWT and OIDC authentication.<br>
 For theme of porject will be chosed shop of "Phone cases" (but emphasis was more on auth and not all backend functionality was used on frontend).
 
