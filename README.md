@@ -62,4 +62,7 @@ But for backend you need add `/scalar/v1` path to link or click here: [https://l
 - Fontend with Blazor WebAssembly (MudBlazor UI)
 
 ## Postman Documentation
-Link to [Postman Documentation](https://documenter.getpostman.com/view/13436691/TzJx9G8z)
+Link to [Postman Documentation](https://documenter.getpostman.com/view/29519259/2sAYdiopYQ)
+
+## Instrucation
+[Video Instrucation](https://drive.google.com/file/d/1_qZg2wJAdhvggdHSsO8SEpuSWum2OQOl/view?usp=drive_link)
